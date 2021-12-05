@@ -67,8 +67,8 @@ module fpga (
     input  wire       phy_rmii_crsdv,
     input  wire       phy_rmii_rxer,     // rxer is optional for RMII
     input  wire [1:0] phy_rmii_rxd,
-    output reg        phy_rmii_txen,
-    output reg  [1:0] phy_rmii_txd,
+    output wire        phy_rmii_txen,
+    output wire  [1:0] phy_rmii_txd,
     output wire       phy_reset_n,
     output wire       phy_ref_clk,
 

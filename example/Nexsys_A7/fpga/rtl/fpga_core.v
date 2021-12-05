@@ -73,9 +73,9 @@ module fpga_core #
     input  wire       phy_rmii_crsdv,
     input  wire       phy_rmii_rxer,     // rxer is optional for RMII
     input  wire [1:0] phy_rmii_rxd,
-    output reg        phy_rmii_txen,
-    output reg  [1:0] phy_rmii_txd,
-    output  wire      phy_reset_n,
+    output wire       phy_rmii_txen,
+    output wire [1:0] phy_rmii_txd,
+    output wire       phy_reset_n,
 
 
     /*
@@ -87,14 +87,14 @@ module fpga_core #
 
 
 
-  wire       mmi_rx_clk;
-  wire [3:0] mmi_rxd;
-  wire       mmi_rx_dv;
-  wire       mmi_rx_er;
-  wire       mmi_tx_clk;
-  wire [3:0] mmi_txd;
-  wire       mmi_tx_en;
-
+  wire       mii_rx_clk;
+  wire [3:0] mii_rxd;
+  wire       mii_rx_dv;
+  wire       mii_rx_er;
+  wire       mii_tx_clk;
+  wire [3:0] mii_txd;
+  wire       mii_tx_en;
+  wire       mii_crs;
 
 
   // AXI between MAC and Ethernet modules
@@ -233,8 +233,8 @@ module fpga_core #
 
   // Configuration
   wire [47:0] local_mac   = 48'h02_00_00_00_00_00;
-  wire [31:0] local_ip    = {8'd192, 8'd168, 8'd1,   8'd128};
-  wire [31:0] gateway_ip  = {8'd192, 8'd168, 8'd1,   8'd1};
+  wire [31:0] local_ip    = {8'd192, 8'd168, 8'd10,   8'd128};
+  wire [31:0] gateway_ip  = {8'd192, 8'd168, 8'd10,   8'd1};
   wire [31:0] subnet_mask = {8'd255, 8'd255, 8'd255, 8'd0};
 
   // IP ports not used
@@ -344,79 +344,53 @@ module fpga_core #
 
   assign uart_txd = 0;
 
+  eth_mac_rmii_fifo   #(
+                        .TARGET(TARGET),
+                        .CLOCK_INPUT_STYLE("BUFR"),
+                        .ENABLE_PADDING(1),
+                        .MIN_FRAME_LENGTH(64),
+                        .TX_FIFO_DEPTH(4096),
+                        .TX_FRAME_FIFO(1),
+                        .RX_FIFO_DEPTH(4096),
+                        .RX_FRAME_FIFO(1)
+                      )
+                      eth_mac_rmii_fifo_inst (
+                        .rst (rst ),
+                        .logic_clk (clk ),
+                        .logic_rst (rst ),
 
-  rmii_phy_if
-    rmii_phy_if_dut (
-      .rstn (rstn ),
-      //100M
-      .mode_speed (1'b1 ),
-      .mac_mii_crs (mac_mii_crs ),
-      .mac_mii_rxrst (rst ),
-      .mac_mii_rxc (mii_rx_clk ),
-      .mac_mii_rxdv (mii_rx_dv ),
-      .mac_mii_rxer (mii_rx_er ),
-      .mac_mii_rxd (mii_rxd ),
-      .mac_mii_txrst (rst ),
-      .mac_mii_txc (mii_tx_clk ),
-      .mac_mii_txen (mii_tx_en ),
-      .mac_mii_txer ( ),
-      .mac_mii_txd (mii_txd ),
-      .phy_rmii_ref_clk (phy_rmii_ref_clk ),
-      .phy_rmii_crsdv (phy_rmii_crsdv ),
-      .phy_rmii_rxer (phy_rmii_rxer ),
-      .phy_rmii_rxd (phy_rmii_rxd ),
-      .phy_rmii_txen (phy_rmii_txen ),
-      .phy_rmii_txd  ( phy_rmii_txd)
-    );
+                        .tx_axis_tdata (tx_axis_tdata ),
+                        .tx_axis_tvalid (tx_axis_tvalid ),
+                        .tx_axis_tready (tx_axis_tready ),
+                        .tx_axis_tlast (tx_axis_tlast ),
+                        .tx_axis_tuser (tx_axis_tuser ),
+
+                        .rx_axis_tdata (rx_axis_tdata ),
+                        .rx_axis_tvalid (rx_axis_tvalid ),
+                        .rx_axis_tready (rx_axis_tready ),
+                        .rx_axis_tlast (rx_axis_tlast ),
+                        .rx_axis_tuser (rx_axis_tuser ),
 
 
-  eth_mac_mii_fifo #(
-                     .TARGET(TARGET),
-                     .CLOCK_INPUT_STYLE("BUFR"),
-                     .ENABLE_PADDING(1),
-                     .MIN_FRAME_LENGTH(64),
-                     .TX_FIFO_DEPTH(4096),
-                     .TX_FRAME_FIFO(1),
-                     .RX_FIFO_DEPTH(4096),
-                     .RX_FRAME_FIFO(1)
-                   )
-                   eth_mac_inst (
-                     .rst(rst),
-                     .logic_clk(clk),
-                     .logic_rst(rst),
 
-                     .tx_axis_tdata(tx_axis_tdata),
-                     .tx_axis_tvalid(tx_axis_tvalid),
-                     .tx_axis_tready(tx_axis_tready),
-                     .tx_axis_tlast(tx_axis_tlast),
-                     .tx_axis_tuser(tx_axis_tuser),
+                        .phy_rmii_ref_clk (phy_rmii_ref_clk ),
+                        .phy_rmii_crsdv (phy_rmii_crsdv ),
+                        .phy_rmii_rxer (phy_rmii_rxer ),
+                        .phy_rmii_rxd (phy_rmii_rxd ),
+                        .phy_rmii_txen (phy_rmii_txen ),
+                        .phy_rmii_txd (phy_rmii_txd ),
 
-                     .rx_axis_tdata(rx_axis_tdata),
-                     .rx_axis_tvalid(rx_axis_tvalid),
-                     .rx_axis_tready(rx_axis_tready),
-                     .rx_axis_tlast(rx_axis_tlast),
-                     .rx_axis_tuser(rx_axis_tuser),
+                        .tx_fifo_overflow(),
+                        .tx_fifo_bad_frame(),
+                        .tx_fifo_good_frame(),
+                        .rx_error_bad_frame(),
+                        .rx_error_bad_fcs(),
+                        .rx_fifo_overflow(),
+                        .rx_fifo_bad_frame(),
+                        .rx_fifo_good_frame(),
 
-                     .mii_rx_clk(mii_rx_clk),
-                     .mii_rxd(mii_rxd),
-                     .mii_rx_dv(mii_rx_dv),
-                     .mii_rx_er(mii_rx_er),
-                     .mii_tx_clk(mii_tx_clk),
-                     .mii_txd(mii_txd),
-                     .mii_tx_en(mii_tx_en),
-                     .mii_tx_er(),
-
-                     .tx_fifo_overflow(),
-                     .tx_fifo_bad_frame(),
-                     .tx_fifo_good_frame(),
-                     .rx_error_bad_frame(),
-                     .rx_error_bad_fcs(),
-                     .rx_fifo_overflow(),
-                     .rx_fifo_bad_frame(),
-                     .rx_fifo_good_frame(),
-
-                     .ifg_delay(12)
-                   );
+                        .ifg_delay(12)
+                      );
 
   eth_axis_rx
     eth_axis_rx_inst (

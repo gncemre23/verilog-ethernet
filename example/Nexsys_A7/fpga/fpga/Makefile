@@ -11,8 +11,8 @@ SYN_FILES += rtl/debounce_switch.v
 SYN_FILES += rtl/sync_signal.v
 SYN_FILES += lib/eth/rtl/ssio_sdr_in.v
 SYN_FILES += lib/eth/rtl/mii_phy_if.v
-SYN_FILES += lib/eth/rtl/eth_mac_mii_fifo.v
-SYN_FILES += lib/eth/rtl/eth_mac_mii.v
+SYN_FILES += lib/eth/rtl/eth_mac_rmii_fifo.v
+SYN_FILES += lib/eth/rtl/eth_mac_rmii.v
 SYN_FILES += lib/eth/rtl/eth_mac_1g.v
 SYN_FILES += lib/eth/rtl/axis_gmii_rx.v
 SYN_FILES += lib/eth/rtl/axis_gmii_tx.v
@@ -34,19 +34,19 @@ SYN_FILES += lib/eth/rtl/arp_cache.v
 SYN_FILES += lib/eth/rtl/arp_eth_rx.v
 SYN_FILES += lib/eth/rtl/arp_eth_tx.v
 SYN_FILES += lib/eth/rtl/eth_arb_mux.v
+SYN_FILES += lib/eth/rtl/rmii_phy_if.sv
 SYN_FILES += lib/eth/lib/axis/rtl/arbiter.v
 SYN_FILES += lib/eth/lib/axis/rtl/priority_encoder.v
 SYN_FILES += lib/eth/lib/axis/rtl/axis_fifo.v
 SYN_FILES += lib/eth/lib/axis/rtl/axis_async_fifo.v
 SYN_FILES += lib/eth/lib/axis/rtl/axis_async_fifo_adapter.v
 SYN_FILES += lib/eth/lib/axis/rtl/sync_reset.v
-SYB_FILES += lib/eth/rtl/rmii_phy_if_sv
 
 # XDC files
 XDC_FILES = fpga.xdc
-XDC_FILES += lib/eth/syn/vivado/mii_phy_if.tcl
-XDC_FILES += lib/eth/syn/vivado/eth_mac_fifo.tcl
-XDC_FILES += lib/eth/lib/axis/syn/vivado/axis_async_fifo.tcl
+#XDC_FILES += lib/eth/syn/vivado/mii_phy_if.tcl
+#XDC_FILES += lib/eth/syn/vivado/eth_mac_fifo.tcl
+#XDC_FILES += lib/eth/lib/axis/syn/vivado/axis_async_fifo.tcl
 XDC_FILES += lib/eth/lib/axis/syn/vivado/sync_reset.tcl
 
 include ../common/vivado.mk
