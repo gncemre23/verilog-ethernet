@@ -69,6 +69,8 @@ module fpga (
     input  wire [1:0] phy_rmii_rxd,
     output reg        phy_rmii_txen,
     output reg  [1:0] phy_rmii_txd,
+    output wire       phy_reset_n,
+    output wire       phy_ref_clk,
 
     /*
      * UART: 500000 bps, 8N1
@@ -219,7 +221,7 @@ module fpga (
                 .out({uart_rxd_int})
               );
 
-  //assign phy_ref_clk = clk_25mhz_int;
+  assign phy_ref_clk = clk_50mhz_int;
 
   fpga_core #(
               .TARGET("XILINX")
@@ -262,6 +264,7 @@ module fpga (
               .phy_rmii_rxd     (phy_rmii_rxd),
               .phy_rmii_txen    (phy_rmii_txen),
               .phy_rmii_txd     (phy_rmii_txd),
+              .phy_reset_n      (phy_reset_n),
               /*
                * UART: 115200 bps, 8N1
                */

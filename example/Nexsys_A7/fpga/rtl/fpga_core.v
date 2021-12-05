@@ -75,7 +75,7 @@ module fpga_core #
     input  wire [1:0] phy_rmii_rxd,
     output reg        phy_rmii_txen,
     output reg  [1:0] phy_rmii_txd,
-
+    output  wire      phy_reset_n,
 
 
     /*
@@ -94,9 +94,8 @@ module fpga_core #
   wire       mmi_tx_clk;
   wire [3:0] mmi_txd;
   wire       mmi_tx_en;
-  wire       mmi_col;
-  wire       mmi_crs;
-  wire       mmi_reset_n;
+
+
 
   // AXI between MAC and Ethernet modules
   wire [7:0] rx_axis_tdata;
