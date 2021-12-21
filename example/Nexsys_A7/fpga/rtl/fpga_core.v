@@ -321,13 +321,13 @@ module fpga_core #
 
   // Place first payload byte onto LEDs
   reg valid_last = 0;
-  reg [7:0] led_reg = 0;
+  wire [15:0] led_reg;
 
   always @(posedge clk)
   begin
     if (rst)
     begin
-      led_reg <= 0;
+      //led_reg <= 0;
     end
     else
     begin
@@ -335,7 +335,7 @@ module fpga_core #
       begin
         if (!valid_last)
         begin
-          led_reg <= tx_udp_payload_axis_tdata;
+          //led_reg <= tx_udp_payload_axis_tdata;
           valid_last <= 1'b1;
         end
         if (tx_udp_payload_axis_tlast)
@@ -345,9 +345,10 @@ module fpga_core #
       end
     end
   end
+  assign led_reg = seq_num[15:0];
 
   //assign led = sw;
-  assign {led0_g, led1_g, led2_g, led3_g, led4, led5, led6, led7} = led_reg;
+  assign {led7, led6, led5, led4, led3_b, led3_g, led3_r, led2_b,led2_g, led2_r, led1_b, led1_g, led1_r, led0_b, led0_g,led0_r} = led_reg;
   assign phy_reset_n = !rst;
 
   assign uart_txd = 0;
