@@ -35,6 +35,7 @@ SYN_FILES += lib/eth/rtl/arp_eth_rx.v
 SYN_FILES += lib/eth/rtl/arp_eth_tx.v
 SYN_FILES += lib/eth/rtl/eth_arb_mux.v
 SYN_FILES += lib/eth/rtl/rmii_phy_if.sv
+SYN_FILES += lib/eth/rtl/moldUDP64.sv
 SYN_FILES += lib/eth/lib/axis/rtl/arbiter.v
 SYN_FILES += lib/eth/lib/axis/rtl/priority_encoder.v
 SYN_FILES += lib/eth/lib/axis/rtl/axis_fifo.v

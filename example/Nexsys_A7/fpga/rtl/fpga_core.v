@@ -231,6 +231,14 @@ module fpga_core #
   wire tx_fifo_udp_payload_axis_tlast;
   wire tx_fifo_udp_payload_axis_tuser;
 
+
+  // moldUPD64 signals
+  (* mark_debug = "true" *) wire [79:0] session;
+  (* mark_debug = "true" *) wire [63:0] seq_num;
+  (* mark_debug = "true" *) wire [15:0] message_cnt;
+  (* mark_debug = "true" *) wire [15:0] message_length;
+  (* mark_debug = "true" *) wire [7:0]  message_data;
+
   // Configuration
   wire [47:0] local_mac   = 48'h02_00_00_00_00_00;
   wire [31:0] local_ip    = {8'd192, 8'd168, 8'd10,   8'd128};
@@ -343,6 +351,22 @@ module fpga_core #
   assign phy_reset_n = !rst;
 
   assign uart_txd = 0;
+
+
+  moldUPD64_decoder
+    moldUPD64_decoder_inst (
+      .rst (rst ),
+      .clk (clk ),
+      .UDP_Payload_data (rx_udp_payload_axis_tdata ),
+      .UDP_Payload_valid (rx_fifo_udp_payload_axis_tvalid ),
+      .session (session ),
+      .seq_num (seq_num ),
+      .message_cnt (message_cnt ),
+      .message_length (message_length ),
+      .message_data (message_data)
+    );
+
+
 
   eth_mac_rmii_fifo   #(
                         .TARGET(TARGET),
