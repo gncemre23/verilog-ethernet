@@ -263,7 +263,7 @@ module fpga_core #
   assign tx_ip_payload_axis_tuser = 0;
 
   // Loop back UDP
-  wire match_cond = rx_udp_dest_port == 1234;
+  wire match_cond = rx_udp_dest_port == 21001;
   wire no_match = !match_cond;
 
   reg match_cond_reg = 0;
